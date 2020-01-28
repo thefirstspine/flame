@@ -4,22 +4,18 @@ import os
 
 
 class ComputePlayers(object):
-    """Command to compute on players data."""
-
-    DATA_PATH = './data'
-
-    def get(self, player_id):
+    def get(self, player_id, env = 'production'):
         """"Get a player data"""
-        with open(self.DATA_PATH + '/wizzards/' + str(player_id), 'r') as outfile:
+        with open(self.__get_data_path(env) + '/wizzards/' + str(player_id), 'r') as outfile:
             data = outfile.read()
             return json.loads(data)
 
-    def ranks(self):
+    def ranks(self, env = 'production'):
         """Ranks the players according to their victories"""
-        files = os.listdir(self.DATA_PATH + '/wizzards')
+        files = os.listdir(self.__get_data_path(env) + '/wizzards')
         ranks = []
         for name in files:
-            player_data = self.get(name)
+            player_data = self.get(name, env)
             points = self.__compute_points(player_data['history'])
             ranks.append({
                 'player': player_data,
@@ -27,9 +23,9 @@ class ComputePlayers(object):
             })
         return sorted(ranks, key=lambda x: x['points'], reverse=True)
 
-    def points(self, player_id):
+    def points(self, player_id, env = 'production'):
         """Get the points of a player"""
-        player_data = self.get(player_id)
+        player_data = self.get(player_id, env)
         return self.__compute_points(player_data['history'])
 
     def __compute_points(self, history):
@@ -38,6 +34,9 @@ class ComputePlayers(object):
         for history_item in history:
             points += 3 if history_item['victory'] else -1
         return points
+
+    def __get_data_path(self, env):
+        return '/storage/arena' if env == 'production' else './data'
 
 
 if __name__ == '__main__':
