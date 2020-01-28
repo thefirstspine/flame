@@ -1,0 +1,7 @@
+```bash
+docker build -t test/fire:latest .
+```
+
+```bash
+docker run test/fire:latest
+```
