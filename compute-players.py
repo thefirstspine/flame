@@ -36,6 +36,7 @@ class ComputePlayers(object):
         return points
 
     def __get_data_path(self, env):
+        """Get the data path according to an environment"""
         return '/storage/arena' if env == 'production' else './data'
 
 
