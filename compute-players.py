@@ -4,28 +4,31 @@ import os
 
 
 class ComputePlayers(object):
-    def get(self, player_id, env = 'production'):
+    def get_player(self, player_id, env='production'):
         """"Get a player data"""
         with open(self.__get_data_path(env) + '/wizzards/' + str(player_id), 'r') as outfile:
             data = outfile.read()
             return json.loads(data)
 
-    def ranks(self, env = 'production'):
+    def ranks(self, env='production'):
         """Ranks the players according to their victories"""
         files = os.listdir(self.__get_data_path(env) + '/wizzards')
         ranks = []
         for name in files:
-            player_data = self.get(name, env)
+            player_data = self.get_player(name, env)
             points = self.__compute_points(player_data['history'])
             ranks.append({
-                'player': player_data,
+                'player': {
+                    'id': player_data['id'],
+                    'name': player_data['name'],
+                },
                 'points': points,
             })
         return sorted(ranks, key=lambda x: x['points'], reverse=True)
 
-    def points(self, player_id, env = 'production'):
+    def points(self, player_id, env='production'):
         """Get the points of a player"""
-        player_data = self.get(player_id, env)
+        player_data = self.get_player(player_id, env)
         return self.__compute_points(player_data['history'])
 
     def __compute_points(self, history):
