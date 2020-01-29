@@ -1,22 +1,21 @@
 import fire
 import json
 import os
-from base import FireCommand
 
 
-class ComputePlayers(FireCommand):
-    def get_player(self, player_id, env='production', export_json=False):
+class ComputePlayers:
+    def get_player(self, player_id, path='/storage/arena', export_json=False):
         """"Get a player data"""
-        with open(self.get_data_path(env) + '/wizzards/' + str(player_id), 'r') as outfile:
+        with open(path + '/wizzards/' + str(player_id), 'r') as outfile:
             data = outfile.read()
             return data if export_json is True else json.loads(data)
 
-    def ranks(self, env='production', export_json=False):
+    def ranks(self, path='/storage/arena', export_json=False):
         """Ranks the players according to their victories"""
-        files = os.listdir(self.get_data_path(env) + '/wizzards')
+        files = os.listdir(path + '/wizzards')
         ranks = []
         for name in files:
-            player_data = self.get_player(name, env)
+            player_data = self.get_player(name, path)
             points = self.__compute_points(player_data['history'])
             ranks.append({
                 'player': {
@@ -28,9 +27,9 @@ class ComputePlayers(FireCommand):
         output = sorted(ranks, key=lambda x: x['points'], reverse=True)
         return json.dumps(output) if export_json is True else output
 
-    def get_points(self, player_id, env='production', export_json=False):
+    def get_points(self, player_id, path='/storage/arena', export_json=False):
         """Get the points of a player"""
-        player_data = self.get_player(player_id, env)
+        player_data = self.get_player(player_id, path)
         output = self.__compute_points(player_data['history'])
         return json.dumps(output) if export_json is True else output
 
