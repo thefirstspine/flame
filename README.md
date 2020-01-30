@@ -8,7 +8,7 @@ Flame is a collection of data computing & analysis commands on the TFS collected
 
 We are trying to stick to the GDPR advices and all the data analysis scripts are open source and centralized to increase control on our data treatment process.
 
-## Using with docker
+## Using with Docker
 
 Build a Docker image:
 
@@ -19,12 +19,33 @@ docker build -t test/flame:latest .
 Run the image:
 
 ```bash
-docker run -v '{source-data-storage}:/storage/{identifier}' test/flame:latest
+docker run -v '{source-data-storage}:/storage/{identifier}' -d test/flame:latest --name flame_container
+docker exec -t flame_container python compute-games.py count_game_types
 ```
 
 Example with Arena:
 
 ```bash
 docker run -v '/block-storage/arena/data:/storage/arena' test/flame:latest
+docker exec -t flame_container python compute-games.py count_game_types
 ```
 
+## Using with python installed on the server
+
+Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+Run commands
+
+```bash
+python compute-games.py count_game_types --path={source-data-storage}
+```
+
+Example with Arena:
+
+```bash
+python compute-games.py count_game_types --path=/block-storage/arena/data
+```
