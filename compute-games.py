@@ -3,6 +3,13 @@ import json
 import os
 from datetime import datetime
 
+print("███████╗    ██╗    ██████╗     ███████╗")
+print("██╔════╝    ██║    ██╔══██╗    ██╔════╝")
+print("█████╗      ██║    ██████╔╝    █████╗")
+print("██╔══╝      ██║    ██╔══██╗    ██╔══╝")
+print("██║         ██║    ██║  ██║    ███████╗")
+print("╚═╝         ╚═╝    ╚═╝  ╚═╝    ╚══════╝")
+
 
 class ComputeGames:
     def get_game(self, player_id, path='/storage/arena', export_json=False):
