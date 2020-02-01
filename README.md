@@ -1,5 +1,19 @@
 # DATA COMPUTING & ANALYSIS
 
+<p style="text-align:center">
+````
+ (        (                      *             
+ )\ )     )\ )       (         (  `            
+(()/(    (()/(       )\        )\))(      (    
+ /(_))    /(_))   ((((_)(     ((_)()\     )\   
+(_))_|   (_))      )\ _ )\    (_()((_)   ((_)  
+| |_     | |       (_)_\(_)   |  \/  |   | __| 
+| __|    | |__      / _ \     | |\/| |   | _|  
+|_|      |____|    /_/ \_\    |_|  |_|   |___| 
+                                               
+````
+</p>
+
 ## About Flame
 
 Flame is a collection of data computing & analysis commands on the TFS collected data. These CLIs are served by Google Fire.
@@ -49,3 +63,8 @@ Example with Arena:
 ```bash
 python compute-games.py count_game_types --path=/block-storage/arena/data
 ```
+
+## The commands
+
+- [compute-games.md](compute-games.md)
+- [compute-players.md](compute-players.md)
