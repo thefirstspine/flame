@@ -5,7 +5,7 @@ import os
 
 class ComputePlayers:
     def get_player(self, player_id, path='/storage/arena', export_json=False):
-        """"Get a player data"""
+        """Get a player data"""
         with open(path + '/wizzards/' + str(player_id), 'r') as outfile:
             data = outfile.read()
             return data if export_json is True else json.loads(data)
