@@ -25,20 +25,20 @@ We are trying to stick to the GDPR advices and all the data analysis scripts are
 Build a Docker image:
 
 ```bash
-docker build -t test/flame:latest .
+docker build -t thefirstspine/flame:latest .
 ```
 
 Run the image:
 
 ```bash
-docker run -v '{source-data-storage}:/storage/{identifier}' -d test/flame:latest --name flame_container
+docker run -v '{source-data-storage}:/storage/{identifier}' -d thefirstspine/flame:latest --name flame_container
 docker exec -t flame_container python compute-games.py count_game_types
 ```
 
 Example with Arena:
 
 ```bash
-docker run -v '/block-storage/arena/data:/storage/arena' test/flame:latest
+docker run -v '/block-storage/arena/data:/storage/arena' thefirstspine/flame:latest
 docker exec -t flame_container python compute-games.py count_game_types
 ```
 
