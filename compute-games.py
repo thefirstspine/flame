@@ -5,9 +5,9 @@ from datetime import datetime
 
 
 class ComputeGames:
-    def get_game(self, player_id, path='/storage/arena', export_json=False):
+    def get_game(self, game_id, path='/storage/arena', export_json=False):
         """"Get a game instance data"""
-        with open(path + '/games/' + str(player_id), 'r') as outfile:
+        with open(path + '/games/' + str(game_id), 'r') as outfile:
             data = outfile.read()
             return data if export_json is True else json.loads(data)
 
