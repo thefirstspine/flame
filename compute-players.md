@@ -4,7 +4,7 @@ NAME
 
 SYNOPSIS
 
-    compute-players.py [4mCOMMAND[0m
+    compute-players.py COMMAND
 
 COMMANDS
 
