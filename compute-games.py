@@ -101,6 +101,29 @@ class ComputeGames:
                 pass
         return json.dumps(weekdays) if export_json is True else weekdays
 
+    def count_destroyed_cards_per_type(self, path='/storage/arena', export_json=False):
+        """Get the destroyed cards per type"""
+        files = os.listdir(path + '/games')
+        types = {
+            'creature': 0,
+            'spell': 0,
+            'artifact': 0,
+            'player': 0,
+            'square': 0,
+        }
+        for name in files:
+            game_data = self.get_game(name, path)
+            for card in game_data['cards']:
+                try:
+                    if card['currentStats']['life'] <= 0:
+                        type = card['card']['type']
+                        types[type] += 1
+                except KeyError:
+                    pass
+                except IndexError:
+                    pass
+        return json.dumps(types) if export_json is True else types
+
 
 if __name__ == '__main__':
     fire.Fire(ComputeGames)
