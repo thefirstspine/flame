@@ -66,3 +66,4 @@ python compute-games.py count_game_types --path=/block-storage/arena/data
 
 - [compute-games.md](compute-games.md)
 - [compute-players.md](compute-players.md)
+- [compute-sessions.md](compute-sessions.md)
