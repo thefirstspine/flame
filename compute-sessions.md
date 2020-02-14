@@ -1,10 +1,13 @@
-NAM
+## NAME
+
     compute-sessions.py
 
-SYNOPSIS
+## SYNOPSIS
+
     compute-sessions.py COMMAND
 
-COMMANDS
+## COMMANDS
+
     COMMAND is one of the following:
 
      get_sessions
@@ -12,3 +15,7 @@ COMMANDS
 
      get_sessions_with_events
        Get the sessions with events in the Solid Pancake service tracking
+
+     count_sessions_per_product
+       Count the sessions per product
+

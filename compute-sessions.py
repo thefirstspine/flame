@@ -66,6 +66,16 @@ class ComputeSessions:
             session['events'] = events
         return json.dumps(sessions) if export_json is True else sessions
 
+    def count_sessions_per_product(self, path='/storage/arena', export_json=False):
+        """Count the sessions per product"""
+        cursor = self.__connection.cursor(cursor_factory=RealDictCursor)
+        cursor.execute("""SELECT product, COUNT(product) FROM "session" GROUP BY "product" """)
+        products = {}
+        for result in cursor.fetchall():
+            products[result['product']] = result['count']
+        return json.dumps(products) if export_json is True else products
+
 
 if __name__ == '__main__':
     fire.Fire(ComputeSessions)
+
