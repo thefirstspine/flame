@@ -1,4 +1,6 @@
+requests
 fire==0.2.1
 six==1.14.0
 termcolor==1.1.0
 psycopg2==2.8.4
+
