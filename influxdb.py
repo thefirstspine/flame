@@ -9,9 +9,11 @@ class ComputeSessions:
     __python_executable = "python3"
 
     def setup(self):
+        """Influx setup. Creates the required influx database."""
         self.__query("CREATE DATABASE %s" % self.__db_name)
 
     def push(self, command, path=None):
+        """Pushes stats from Flame command call."""
         # Create the command
         command_file = command.split(':')[0]
         command_arg1 = command.split(':')[1]

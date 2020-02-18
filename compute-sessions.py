@@ -30,7 +30,7 @@ class ComputeSessions:
             raise Exception('Section {0} not found in the {1} file'.format(section, filename))
         return db
 
-    def get_sessions(self, offset=0, limit=10, path='/storage/arena', export_json=False):
+    def get_sessions(self, offset=0, limit=10, export_json=False):
         """Get the sessions in the Solid Pancake service tracking"""
         cursor = self.__connection.cursor(cursor_factory=RealDictCursor)
         cursor.execute(
@@ -47,10 +47,41 @@ class ComputeSessions:
             })
         return json.dumps(sessions) if export_json is True else sessions
 
-    def get_sessions_with_events(self, path='/storage/arena', export_json=False):
+    def count_active_sessions_per_product_and_version(self, export_json=False):
+        """Get the sessions in the Solid Pancake service tracking"""
+        cursor = self.__connection.cursor(cursor_factory=RealDictCursor)
+        sessions = {}
+        cursor.execute(
+            """SELECT session.* AS last_event_created_at
+            FROM "event"
+            INNER JOIN session ON (event.session_id = session.session_id)
+            WHERE event.created_at > (NOW() - INTERVAL '15 MINUTES')
+            GROUP BY session.session_id"""
+        )
+        for result in cursor.fetchall():
+            key = """%s-%s-%s""" % (result['product'], result['version'], result['label'])
+            try:
+                sessions[key] += 1
+            except KeyError:
+                sessions[key] = 1
+            try:
+                sessions['product-' + result['product']] += 1
+            except KeyError:
+                sessions['product-' + result['product']] = 1
+            try:
+                sessions['version-' + result['version']] += 1
+            except KeyError:
+                sessions['version-' + result['version']] = 1
+            try:
+                sessions['label-' + result['label']] += 1
+            except KeyError:
+                sessions['label-' + result['label']] = 1
+        return json.dumps(sessions) if export_json is True else sessions
+
+    def get_sessions_with_events(self, export_json=False):
         """Get the sessions with events in the Solid Pancake service tracking"""
         cursor = self.__connection.cursor(cursor_factory=RealDictCursor)
-        sessions = self.get_sessions(path=path, offset=0, limit=10, export_json=False)
+        sessions = self.get_sessions(offset=0, limit=10, export_json=False)
         for session in sessions:
             events = []
             cursor.execute(
@@ -66,7 +97,7 @@ class ComputeSessions:
             session['events'] = events
         return json.dumps(sessions) if export_json is True else sessions
 
-    def count_sessions_per_product(self, path='/storage/arena', export_json=False):
+    def count_sessions_per_product(self, export_json=False):
         """Count the sessions per product"""
         cursor = self.__connection.cursor(cursor_factory=RealDictCursor)
         cursor.execute("""SELECT product, COUNT(product) FROM "session" GROUP BY "product" """)
