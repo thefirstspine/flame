@@ -47,6 +47,26 @@ class ComputeSessions:
             })
         return json.dumps(sessions) if export_json is True else sessions
 
+    def get_events(self, offset=0, limit=10, export_json=False):
+        """Get the last events in the Solid Pancake service tracking"""
+        cursor = self.__connection.cursor(cursor_factory=RealDictCursor)
+        cursor.execute(
+            """SELECT event.*, session.product, session.version FROM "event" JOIN "session" ON session.session_id = 
+            event.session_id ORDER BY created_at DESC LIMIT %s OFFSET %s""",
+            (limit, offset))
+        events = []
+        for result in cursor.fetchmany(limit):
+            events.append({
+                'event': result['event'],
+                'category': result['category'],
+                'action': result['action'],
+                'label': result['label'],
+                'product': result['product'],
+                'version': result['version'],
+                'created_at': result['created_at'].strftime('%Y-%m-%d %H:%M:%S'),
+            })
+        return json.dumps(events) if export_json is True else events
+
     def count_active_sessions_per_product_and_version(self, export_json=False):
         """Get the sessions in the Solid Pancake service tracking"""
         cursor = self.__connection.cursor(cursor_factory=RealDictCursor)
