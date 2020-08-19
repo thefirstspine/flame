@@ -97,3 +97,15 @@ Required volume: `volume-thefirstspine-arena-<country>`
 | `count_games_per_hour` | Get the games played per hour | <ul><li>`String outputs_to`<br>Indicates the output format of the command. Must be python (default) or json.</li></ul> |
 | `count_games_per_weekday` | Get the games played per weekday | <ul><li>`String outputs_to`<br>Indicates the output format of the command. Must be python (default) or json.</li></ul> |
 | `count_destroyed_cards_per_type` | Get the destroyed cards per type | <ul><li>`String outputs_to`<br>Indicates the output format of the command. Must be python (default) or json.</li></ul> |
+
+### Collection players.py
+
+The commands under this collection are related with the player data (e.g. wizards files)
+
+Required volume: `volume-thefirstspine-arena-<country>`
+
+| Command | Description | Options |
+| --- | --- | --- |
+| `get_player <game_id>` | Get a player data | <ul><li>`String outputs_to`<br>Indicates the output format of the command. Must be python (default) or json.</li></ul> |
+| `ranks` | Ranks the players according to their victories | <ul><li>`String outputs_to`<br>Indicates the output format of the command. Must be python (default) or json.</li></ul> |
+| `get_points <player_id>` | Get the points of a player | <ul><li>`String outputs_to`<br>Indicates the output format of the command. Must be python (default) or json.</li></ul> |
