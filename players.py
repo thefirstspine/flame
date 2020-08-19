@@ -23,7 +23,7 @@ class ComputePlayers(BaseCommand):
         files = os.listdir('/flame-volume/data/wizzards')
         ranks = []
         for name in files:
-            player_data = self.get_player(name)
+            player_data = self._get_player(name)
             points = self.__compute_points(player_data['history'])
             ranks.append({
                 'player': {
@@ -37,7 +37,7 @@ class ComputePlayers(BaseCommand):
 
     def get_points(self, player_id):
         """Get the points of a player"""
-        player_data = self.get_player(player_id)
+        player_data = self._get_player(player_id)
         output = self.__compute_points(player_data['history'])
         return self.output(output)
 
