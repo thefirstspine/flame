@@ -1,4 +1,6 @@
-# DATA COMPUTING & ANALYSIS
+# Data computing with Flame
+
+## About Flame
 
 ```
  (        (                      *             
@@ -12,59 +14,86 @@
                                                
 ```
 
-## About Flame
+Flame is a containerized  collection of data computing & analysis commands on the TFS collected data. These CLIs are served by Google Python Fire.
 
-Flame is a collection of data computing & analysis commands on the TFS collected data. These CLIs are served by Google Fire.
+More on Google Python Fire: https://github.com/google/python-fire
 
-## Why developing custom data computing & analysis commands?
+## Synopsis
 
-We are trying to stick to the GDPR advices and all the data analysis scripts are open source and centralized to increase control on our data treatment process.
-
-## Using with Docker
-
-Build a Docker image:
-
-```bash
-docker build -t thefirstspine/flame:latest .
+```
++----------------------+                  +----------------------+
+| FRONTAL SERVICE      |                  | VOLUME               |
+|                      |  1/ Writes       |                      |
+| Net service that     |----------------->| External volume      |
+| provide APIs (Arena, |                  | mounted on the       |
+| website, etc.)       |                  | service.             |
++----------------------+                  +----------------------+
+                                                      |
+                                                      | 2/ Copy
+                                                      |
+                                                      v
++----------------------+                  +----------------------+                  +----------------------+
+| STATS ARCHIVES       |                  | VOLUME               |                  | FLAME CONTAINER      |
+|                      |  4/ Fetch        |                      |  3/ Computes     |                      |
+| Archive the          |----------------->| Copy of the volume,  |<---------------->| Performs analysis on |
+| computed data for    |                  | not written nor read |                  | the copied volume    |
+| further use.         |                  | by the ser^ice.      |                  | and write results.   |
++----------------------+                  +----------------------+                  +----------------------+
 ```
 
-Run the image:
+## Usage
 
-```bash
-docker run -v '{source-data-storage}:/storage/{identifier}' -d thefirstspine/flame:latest --name flame_container
-docker exec -t flame_container python compute-games.py count_game_types
-```
+Flame is thinked to run along with docker: run an image on a mounted volume.
 
-Example with Arena:
+### Prepare the environment
 
-```bash
-docker run -v '/block-storage/arena/data:/storage/arena' thefirstspine/flame:latest
-docker exec -t flame_container python compute-games.py count_game_types
-```
+The machine that will run the flame container should have docker installed. Run this to install it:
 
-## Using with python installed on the server
+`apt-get update && apt-get -y install docker-ce docker-ce-cli containerd.io`
 
-Install dependencies
+### Run the docker image
 
-```bash
-pip install -r requirements.txt
-```
+`docker run --name <some-flame> -e FLAME_<SOME_CONFIG>=<some-value> -v </local-volume-mount-point>:/flame-volume thefirstspine/flame:<tag> <the-command>`
 
-Run commands
+For the `latest` version of flame, use the latest tag. The desired volume to compute should be mounted to the `/flame-volume` path.
 
-```bash
-python compute-games.py count_game_types --path={source-data-storage}
-```
+Example : `docker run --name my-flame-container -v /block-storage/arena:/flame-volume thefirstspine/flame:latest python compute-games.py count_game_type`
 
-Example with Arena:
+### Getting output
 
-```bash
-python compute-games.py count_game_types --path=/block-storage/arena/data
-```
+The command will simply print on the standard output the result of the command.
 
-## The commands
+### Docker environment variables configuration
 
-- [compute-games.md](compute-games.md)
-- [compute-players.md](compute-players.md)
-- [compute-sessions.md](compute-sessions.md)
-- [influxdb.md](influxdb.md)
+Based on the environment variables passed to the container, some features will be activated or not. Here’s a list of all available features:
+
+| Variable key | Explaination | Example |
+| --- | --- | --- |
+| `FLAME_POSTGRESQL_DUMP_FILE` | If set, Flame will import this dump file during the startup. It should be in the mounted volume. The path must be relative to the root of the mounted volume. | `FLAME_POSTGRESQL_DUMP_FILE=/data/mydump.sql` |
+
+### Notes
+
+- Auto remove the running container using the `--rm` flag.
+- Output to a file: `docker run --rm -a STDOUT … > myoutput.json`
+
+## Available commands
+
+The computing commands are available inside collections served by Google Python Fire.
+
+To run a command: `<collection> <command> <options>`
+
+For instance: `compute-games.py get_game --game_id=123`
+
+### Collection games.py
+
+All the computations related with the games.
+
+Required volume: `volume-thefirstspine-arena-<country>`
+
+| Command | Description | Options |
+| --- | --- | --- |
+| `get_game <game_id>` | Get a game instance data | <ul><li>`String outputs_to`<br>Indicates the output format of the command. Must be python (default) or json.</li></ul> |
+| `count_game_types` | Get the number of played games by types | <ul><li>`String outputs_to`<br>Indicates the output format of the command. Must be python (default) or json.</li></ul> |
+| `count_games_per_hour` | Get the games played per hour | <ul><li>`String outputs_to`<br>Indicates the output format of the command. Must be python (default) or json.</li></ul> |
+| `count_games_per_weekday` | Get the games played per weekday | <ul><li>`String outputs_to`<br>Indicates the output format of the command. Must be python (default) or json.</li></ul> |
+| `count_destroyed_cards_per_type` | Get the destroyed cards per type | <ul><li>`String outputs_to`<br>Indicates the output format of the command. Must be python (default) or json.</li></ul> |
