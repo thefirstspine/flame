@@ -109,3 +109,17 @@ Required volume: `volume-thefirstspine-arena-<country>`
 | `get_player <game_id>` | Get a player data | <ul><li>`String outputs_to`<br>Indicates the output format of the command. Must be python (default) or json.</li></ul> |
 | `ranks` | Ranks the players according to their victories | <ul><li>`String outputs_to`<br>Indicates the output format of the command. Must be python (default) or json.</li></ul> |
 | `get_points <player_id>` | Get the points of a player | <ul><li>`String outputs_to`<br>Indicates the output format of the command. Must be python (default) or json.</li></ul> |
+
+### Collection sessions.py
+
+All the Solid Pancake sessions. It requires a dump file to be imported with the `FLAME_POSTGRESQL_DUMP_FILE` environment variable.
+
+Required volume: `volume-thefirstspine-solid-pancake-<country>`
+
+| Command | Description | Options |
+| --- | --- | --- |
+| `get_sessions <offset> <limit>` | Get the sessions in the Solid Pancake service tracking | <ul><li>`String outputs_to`<br>Indicates the output format of the command. Must be python (default) or json.</li></ul> |
+| `get_events <offset> <limit>` | Get the last events in the Solid Pancake service tracking | <ul><li>`String outputs_to`<br>Indicates the output format of the command. Must be python (default) or json.</li></ul> |
+| `count_active_sessions_per_product_and_version` | Get the sessions in the Solid Pancake service tracking | <ul><li>`String outputs_to`<br>Indicates the output format of the command. Must be python (default) or json.</li></ul> |
+| `get_sessions_with_events` | Get the sessions with events in the Solid Pancake service tracking | <ul><li>`String outputs_to`<br>Indicates the output format of the command. Must be python (default) or json.</li></ul> |
+| `count_sessions_per_product` | Count the sessions per product | <ul><li>`String outputs_to`<br>Indicates the output format of the command. Must be python (default) or json.</li></ul> |
