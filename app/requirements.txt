@@ -1,6 +1,10 @@
-requests
+certifi==2020.6.20
+chardet==3.0.4
 fire==0.2.1
+idna==2.10
+psycopg2==2.8.6
+pymongo==3.4.0
+requests==2.24.0
 six==1.14.0
 termcolor==1.1.0
-psycopg2==2.8.4
-
+urllib3==1.25.10

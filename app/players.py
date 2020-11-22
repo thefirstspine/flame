@@ -1,44 +1,28 @@
 import fire
-import json
 import os
+from pymongo import MongoClient
 from basecommand import BaseCommand
 
 
 class ComputePlayers(BaseCommand):
 
-    def _get_player(self, player_id):
-        """Get a player data"""
-        with open('/flame-volume/data/wizzards/' + str(player_id), 'r') as outfile:
-            data = outfile.read()
-            return json.loads(data)
-
-    def get_player(self, player_id):
-        """Get a player data"""
-        with open('/flame-volume/data/wizzards/' + str(player_id), 'r') as outfile:
-            data = outfile.read()
-            return self.output(data)
-
     def ranks(self):
-        """Ranks the players according to their victories"""
-        files = os.listdir('/flame-volume/data/wizzards')
+        """Get the number of played games by types"""
+        client = MongoClient(os.environ['FLAME_DB_URL'])
+        db = client.get_database('arena')
+        documents = db.wizards.find({})
+        entities = list(documents)
         ranks = []
-        for name in files:
-            player_data = self._get_player(name)
-            points = self.__compute_points(player_data['history'])
+        for entity in entities:
+            points = self.__compute_points(entity['history'])
             ranks.append({
                 'player': {
-                    'id': player_data['id'],
-                    'name': player_data['name'],
+                    'id': entity['id'],
+                    'name': entity['name'],
                 },
                 'points': points,
             })
         output = sorted(ranks, key=lambda x: x['points'], reverse=True)
-        return self.output(output)
-
-    def get_points(self, player_id):
-        """Get the points of a player"""
-        player_data = self._get_player(player_id)
-        output = self.__compute_points(player_data['history'])
         return self.output(output)
 
     def __compute_points(self, history):
