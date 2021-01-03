@@ -49,6 +49,24 @@ class ComputeSessions(BaseCommand):
             })
         return self.output(results)
 
+    def get_day_client_errors(self):
+        """Get all the events with the category ClientError"""
+        cursor = self.__connection.cursor(cursor_factory=RealDictCursor)
+        cursor.execute("""SELECT * FROM "event" 
+            WHERE category = 'clientError' AND event.created_at > (NOW() - INTERVAL '1 DAY')""")
+        results = []
+        for result in cursor.fetchall():
+            results.append({
+                "event_id": result['event_id'],
+                "session_id": result['session_id'],
+                "category": result['category'],
+                "event": result['event'],
+                "action": result['action'],
+                "label": result['label'],
+                "created_at": result['created_at'],
+            })
+        return self.output(results)
+
 
 if __name__ == '__main__':
     fire.Fire(ComputeSessions)
