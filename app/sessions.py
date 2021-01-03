@@ -13,45 +13,41 @@ class ComputeSessions(BaseCommand):
         super().__init__(outputs_to=outputs_to)
         self.__connection = psycopg2.connect(os.environ['FLAME_DB_URL'])
 
-    def count_active_sessions_per_product_and_version(self):
+    def count_day_sessions_per_product_and_version(self):
         """Get the sessions in the Solid Pancake service tracking"""
         cursor = self.__connection.cursor(cursor_factory=RealDictCursor)
-        sessions = {}
+        results = []
         cursor.execute(
             """SELECT session.* AS last_event_created_at
             FROM "event"
             INNER JOIN session ON (event.session_id = session.session_id)
-            WHERE event.created_at > (NOW() - INTERVAL '15 MINUTES')
+            WHERE event.created_at > (NOW() - INTERVAL '1 DAY')
             GROUP BY session.session_id"""
         )
         for result in cursor.fetchall():
-            key = """%s-%s-%s""" % (result['product'], result['version'], result['label'])
-            try:
-                sessions[key] += 1
-            except KeyError:
-                sessions[key] = 1
-            try:
-                sessions['product-' + result['product']] += 1
-            except KeyError:
-                sessions['product-' + result['product']] = 1
-            try:
-                sessions['version-' + result['version']] += 1
-            except KeyError:
-                sessions['version-' + result['version']] = 1
-            try:
-                sessions['label-' + result['label']] += 1
-            except KeyError:
-                sessions['label-' + result['label']] = 1
-        return self.output(sessions)
+            results.append({
+                "session_id": result['session_id'],
+                "product": result['product'],
+                "label": result['label'],
+                "version": result['version'],
+            })
+        return self.output(results)
 
-    def count_sessions_per_product(self):
+    def count_sessions_per_product_label_version(self):
         """Count the sessions per product"""
         cursor = self.__connection.cursor(cursor_factory=RealDictCursor)
-        cursor.execute("""SELECT product, COUNT(product) FROM "session" GROUP BY "product" """)
-        products = {}
+        cursor.execute("""SELECT product, version, label, COUNT(*) count
+            FROM "session" GROUP BY ("product", "version", "label")
+            ORDER BY ("product", "version", "label"); """)
+        results = []
         for result in cursor.fetchall():
-            products[result['product']] = result['count']
-        return self.output(products)
+            results.append({
+                "product": result['product'],
+                "label": result['label'],
+                "version": result['version'],
+                "count": result['count'],
+            })
+        return self.output(results)
 
 
 if __name__ == '__main__':
